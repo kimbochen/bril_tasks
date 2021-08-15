@@ -3,7 +3,6 @@ import JSON
 function get_instrs()
     prog = JSON.parse(ARGS[1])
     instrs = prog["functions"][1]["instrs"]
-    JSON.print(instrs, 2)
     instrs
 end
 
