@@ -1,0 +1,15 @@
+@main {
+    a: int = const 39;
+    b: int = const 85;
+    a_min: bool = lt a b;
+
+    br a_min .get_a .get_b;
+.get_a:
+    print a;
+    jmp .end;
+.get_b:
+    print b;
+    jmp .end;
+.end:
+    nop;
+}
