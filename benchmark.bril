@@ -1,0 +1,10 @@
+@main {
+    a: int = const 39;
+    b: int = const 85;
+
+    c: int = sub b a;
+    d: int = const 46;
+    e: bool = le c d;
+
+    print e;
+}
