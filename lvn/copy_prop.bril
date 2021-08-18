@@ -1,0 +1,7 @@
+# Copy propagation
+@main {
+    a: int = const 39;
+    copy1: int = id a;
+    copy2: int = id copy1;
+    print copy2;
+}

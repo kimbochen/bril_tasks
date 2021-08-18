@@ -1,0 +1,6 @@
+# Dead code elimination
+@main {
+    a: int = const 85;
+    a: int = const 39;
+    print a;
+}

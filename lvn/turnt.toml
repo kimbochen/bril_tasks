@@ -1,0 +1,3 @@
+# Run "turnt {filename} --diff" to test
+command = "bril2json < {filename} | julia lvn.jl | bril2txt"
+diff = "git --no-pager diff --no-index"
