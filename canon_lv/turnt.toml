@@ -1,0 +1,1 @@
+command = "bril2json < {filename} | julia canon_lv.jl | bril2txt"

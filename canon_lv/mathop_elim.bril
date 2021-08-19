@@ -1,0 +1,7 @@
+# Eliminate common mathop instruction
+@main {
+    a: int = const 39;
+    b: int = const 85;
+    c: int = add a b;
+    d: int = add a b;
+}

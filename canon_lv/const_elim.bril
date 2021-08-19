@@ -1,0 +1,4 @@
+@main {
+    a: int = const 39;
+    b: int = const 39;
+}
