@@ -7,12 +7,12 @@ struct Constant <: Value
     value::Int
 end
 
-struct MathOp <: Value
+struct AddMul <: Value
     opr1::String
     opr2::String
 end
 
-struct DivOp <: Value
+struct SubDiv <: Value
     opr1::String
     opr2::String
 end
@@ -33,10 +33,10 @@ function canonlocalvalue(instrs)
         "const" => Constant,
         "id" => Identity,
         "print" => Print,
-        "add" => MathOp,
-        "sub" => MathOp,
-        "mul" => MathOp,
-        "div" => DivOp
+        "add" => AddMul,
+        "mul" => AddMul,
+        "sub" => SubDiv,
+        "div" => SubDiv
     )
 
     for instr in instrs
@@ -50,18 +50,18 @@ function Constant(instr, var2canon)
     Constant(instr["value"])
 end
 
-function MathOp(instr, var2canon)
+function AddMul(instr, var2canon)
     opr1, opr2 = (var2canon[var] for var in instr["args"])
     if opr1 > opr2
-        MathOp(opr2, opr1)
+        AddMul(opr2, opr1)
     else
-        MathOp(opr1, opr2)
+        AddMul(opr1, opr2)
     end
 end
 
-function DivOp(instr, var2canon)
+function SubDiv(instr, var2canon)
     opr1, opr2 = (var2canon[var] for var in instr["args"])
-    DivOp(opr1, opr2)
+    SubDiv(opr1, opr2)
 end
 
 function Identity(instr, var2canon)
@@ -90,7 +90,7 @@ function canoninstr(instr, value::Constant, var2canon, val2canon)
     end
 end
 
-function canoninstr(instr, value::Union{MathOp, DivOp}, var2canon, val2canon)
+function canoninstr(instr, value::Union{AddMul, SubDiv}, var2canon, val2canon)
     if value in keys(val2canon)
         var = val2canon[value]
         instr["op"] = "id"
