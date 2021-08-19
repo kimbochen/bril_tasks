@@ -21,25 +21,27 @@ function canonicalizelocalvalue(instrs)
 
     for instr in instrs
         value = if instr["op"] == "const"
-            Constant(instr["value"])
+            Constant(instr)
         elseif instr["op"] in math_ops
-            MathOp(instr["op"], instr["args"], var2canon)
+            MathOp(instr, var2canon)
         else
             throw("Value for op $(instr["op"]) not implemented.")
         end
 
-        instr = transform_instr(instr, value, var2canon, val2canon)
+        transform_instr(instr, value, var2canon, val2canon)
     end
-
-    instrs
 end
 
-function MathOp(op::String, args::Array, var2canon)
-    opd1, opd2 = [var2canon[var] for var in args]
+function Constant(instr)
+    Constant(instr["value"])
+end
+
+function MathOp(instr, var2canon)
+    opd1, opd2 = [var2canon[var] for var in instr["args"]]
     if opd1 > opd2
-        MathOp(op, opd2, opd1)
+        MathOp(instr["op"], opd2, opd1)
     else
-        MathOp(op, opd1, opd2)
+        MathOp(instr["op"], opd1, opd2)
     end
 end
 
@@ -65,8 +67,7 @@ end
 function main()
     prog = JSON.parse(join(readlines(stdin)))
     instrs = prog["functions"][1]["instrs"]
-    instrs = canonicalizelocalvalue(instrs)
-    prog["functions"][1]["instrs"] = instrs
+    canonicalizelocalvalue(instrs)
     JSON.print(prog, 2)
 end
     
