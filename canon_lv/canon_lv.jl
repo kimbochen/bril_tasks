@@ -13,6 +13,10 @@ struct MathOp <: Value
     opd2::String
 end
 
+struct Identity <: Value
+    ref_var::String
+end
+
 
 function canonicalizelocalvalue(instrs)
     math_ops = ["add", "sub", "mul", "div"]
@@ -22,10 +26,12 @@ function canonicalizelocalvalue(instrs)
     for instr in instrs
         value = if instr["op"] == "const"
             Constant(instr)
+        elseif instr["op"] == "id"
+            Identity(instr, var2canon)
         elseif instr["op"] in math_ops
             MathOp(instr, var2canon)
         else
-            throw("Value for op $(instr["op"]) not implemented.")
+            throw("Value for op '$(instr["op"])' not implemented.")
         end
 
         transform_instr(instr, value, var2canon, val2canon)
@@ -45,6 +51,11 @@ function MathOp(instr, var2canon)
     end
 end
 
+function Identity(instr, var2canon)
+    var = instr["args"][1]
+    Identity(var2canon[var])
+end
+
 function transform_instr(instr, value::Union{Constant, MathOp}, var2canon, val2canon)
     if value in keys(val2canon)
         var = val2canon[value]
@@ -62,6 +73,10 @@ function transform_instr(instr, value::Union{Constant, MathOp}, var2canon, val2c
     instr
 end
 
+function transform_instr(instr, value::Identity, var2canon, val2canon)
+    instr["args"][1] = value.ref_var
+    var2canon[instr["dest"]] = value.ref_var
+end
 
 
 function main()
